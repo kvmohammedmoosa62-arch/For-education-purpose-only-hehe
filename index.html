@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>KV MOOSA | CYBERSECURITY</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #060810;
+      --bg2: #0a0d18;
+      --panel: #0d1120;
+      --border: #1a2540;
+      --accent: #00ffe7;
+      --accent2: #7f00ff;
+      --accent3: #ff003c;
+      --text: #c8d8f0;
+      --muted: #4a5a7a;
+      --glow: 0 0 18px #00ffe780;
+      --glow2: 0 0 18px #7f00ff80;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── SCANLINE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,255,231,0.015) 3px,
+        rgba(0,255,231,0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── GHOST FACE ── */
+    .ghost {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      width: 90px;
+      opacity: 0.18;
+      filter: drop-shadow(0 0 12px #00ffe7) drop-shadow(0 0 30px #7f00ff);
+      z-index: 100;
+      animation: ghostFloat 4s ease-in-out infinite;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .ghost:hover { opacity: 0.5; }
+    @keyframes ghostFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 3rem 1.5rem;
+      position: relative;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 40%, #0d1a3a 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, #1a003a 0%, transparent 60%),
+        var(--bg);
+      overflow: hidden;
+    }
+
+    /* grid bg */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,231,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,231,0.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.3em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.4rem, 7vw, 5.5rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #00ffe7 0%, #7f00ff 60%, #ff003c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 30px #00ffe740);
+      opacity: 0;
+      animation: fadeUp 0.9s 0.5s forwards;
+    }
+
+    .hero-sub {
+      margin-top: 1.4rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: clamp(0.85rem, 2vw, 1.1rem);
+      color: var(--muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 0.9s 0.9s forwards;
+    }
+
+    .hero-badge {
+      margin-top: 2.5rem;
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+      padding: 0.5rem 1.4rem;
+      text-transform: uppercase;
+      box-shadow: var(--glow);
+      opacity: 0;
+      animation: fadeUp 0.9s 1.2s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 36px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 3rem;
+      letter-spacing: 0.05em;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0;
+    }
+
+    /* ── QUOTES ── */
+    #quotes { border-top: none; }
+
+    .quotes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .quote-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 1.8rem 1.6rem;
+      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+    .quote-card:hover {
+      border-left-color: var(--accent2);
+      box-shadow: var(--glow2);
+      transform: translateY(-4px);
+    }
+    .quote-card blockquote {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    .quote-card blockquote::before {
+      content: '"';
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      color: var(--accent);
+      line-height: 0;
+      vertical-align: -0.5rem;
+      margin-right: 0.2rem;
+      opacity: 0.6;
+    }
+    .quote-card cite {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      color: var(--accent);
+      display: block;
+      text-transform: uppercase;
+    }
+
+    /* ── ROADMAPS ── */
+    #roadmaps { background: none; }
+
+    .roadmap-tabs {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+    .tab-btn {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.7rem 1.6rem;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tab-btn.active {
+      border-color: var(--accent);
+      color: var(--bg);
+      background: var(--accent);
+      box-shadow: var(--glow);
+    }
+    .tab-btn.active.defensive {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      box-shadow: var(--glow2);
+      color: #fff;
+    }
+    .tab-btn.active.research {
+      background: var(--accent3);
+      border-color: var(--accent3);
+      box-shadow: 0 0 18px #ff003c80;
+      color: #fff;
+    }
+
+    .roadmap-panel { display: none; }
+    .roadmap-panel.active { display: block; animation: fadeUp 0.5s forwards; }
+
+    .roadmap-intro {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      max-width: 680px;
+    }
+
+    .steps-list { list-style: none; display: flex; flex-direction: column; gap: 1.2rem; }
+
+    .step {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 1.4rem 1.6rem;
+      display: grid;
+      grid-template-columns: 3rem 1fr;
+      gap: 1rem;
+      align-items: start;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .step:hover { transform: translateX(6px); }
+    .step.off:hover { border-color: var(--accent); }
+    .step.def:hover { border-color: var(--accent2); }
+    .step.res:hover { border-color: var(--accent3); }
+
+    .step-num {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .step.def .step-num { color: var(--accent2); }
+    .step.res .step-num { color: var(--accent3); }
+
+    .step-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .step-desc {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .step-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.6rem;
+    }
+    .tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      border: 1px solid;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .off .tag { border-color: #00ffe730; color: var(--accent); }
+    .def .tag { border-color: #7f00ff30; color: var(--accent2); }
+    .res .tag { border-color: #ff003c30; color: var(--accent3); }
+
+    /* ── CONTACT ── */
+    #contact {
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .contact-box {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 3rem 4rem;
+      position: relative;
+    }
+    .contact-box::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+      z-index: -1;
+      filter: blur(18px);
+      opacity: 0.15;
+    }
+    .contact-icon {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      color: var(--accent);
+    }
+    .contact-handle {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #fff;
+    }
+    .contact-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 0.6rem 1.8rem;
+      box-shadow: var(--glow);
+      transition: background 0.25s, color 0.25s;
+    }
+    .contact-link:hover { background: var(--accent); color: var(--bg); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2.5rem;
+      background: rgba(6,8,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.85rem;
+      font-weight: 900;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      nav { padding: 0.9rem 1.2rem; }
+      .nav-links { gap: 1rem; }
+      .contact-box { padding: 2rem 1.5rem; }
+      section { padding: 4rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">KV Moosa</div>
+  <ul class="nav-links">
+    <li><a href="#quotes">Wisdom</a></li>
+    <li><a href="#roadmaps">Roadmaps</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- GHOST FACE SVG -->
+<svg class="ghost" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- Ghost body -->
+  <path d="M20,120 Q20,30 100,30 Q180,30 180,120 L180,220 Q165,205 150,220 Q135,235 120,220 Q105,205 100,218 Q95,205 80,220 Q65,235 50,220 Q35,205 20,220 Z"
+    fill="#00ffe7" fill-opacity="0.08" stroke="#00ffe7" stroke-width="1.5"/>
+  <!-- Eyes - classic ghostface angled -->
+  <ellipse cx="72" cy="115" rx="14" ry="18" fill="#00ffe7" fill-opacity="0.5"/>
+  <ellipse cx="128" cy="115" rx="14" ry="18" fill="#00ffe7" fill-opacity="0.5"/>
+  <!-- Pupils -->
+  <ellipse cx="76" cy="118" rx="6" ry="9" fill="#060810"/>
+  <ellipse cx="132" cy="118" rx="6" ry="9" fill="#060810"/>
+  <!-- Nose -->
+  <path d="M95,140 Q100,148 105,140" stroke="#00ffe7" stroke-width="1.5" fill="none" stroke-opacity="0.6"/>
+  <!-- Mouth - jagged ghostface smile -->
+  <path d="M68,162 Q74,170 80,158 Q86,170 92,158 Q98,170 104,158 Q110,170 116,158 Q122,170 128,162"
+    stroke="#00ffe7" stroke-width="2" fill="none" stroke-linecap="round" stroke-opacity="0.7"/>
+</svg>
+
+<!-- HERO -->
+<div id="hero">
+  <p class="hero-eyebrow">// CYBERSECURITY · KNOWLEDGE · POWER</p>
+  <h1 class="hero-title">KV MOOSA<br/>BUILT THIS<br/>WEBSITE</h1>
+  <p class="hero-sub">ETHICAL HACKER &nbsp;·&nbsp; SECURITY RESEARCHER &nbsp;·&nbsp; GUARDIAN OF THE GRID</p>
+  <span class="hero-badge">// ENTER THE CYBERSPACE</span>
+  <div class="scroll-hint">SCROLL DOWN</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- QUOTES -->
+<section id="quotes">
+  <p class="section-label">// 01 · HACKER WISDOM</p>
+  <h2 class="section-title">Words That Forge Warriors</h2>
+
+  <div class="quotes-grid">
+
+    <div class="quote-card">
+      <blockquote>The quieter you become, the more you are able to hear.</blockquote>
+      <cite>— Ram Dass (adopted by hacker culture)</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>If you think technology can solve your security problems, then you don't understand the problems and you don't understand the technology.</blockquote>
+      <cite>— Bruce Schneier</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>Hackers are breaking the systems for profit. Before, it was about intellectual curiosity and the pursuit of knowledge and thrill, and now hacking is big business.</blockquote>
+      <cite>— Kevin Mitnick</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>The only truly secure system is one that is powered off, cast in a block of concrete, and sealed in a lead-lined room with armed guards.</blockquote>
+      <cite>— Gene Spafford</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>To be a good hacker you must first understand how things work deeply — not just how to use them, but why they work the way they do.</blockquote>
+      <cite>— Unknown Ethical Hacker</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>Security is always excessive until it's not enough.</blockquote>
+      <cite>— Robbie Sinclair</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>Knowing your enemy is the most powerful weapon. Study the attacker's mindset — then you become unstoppable.</blockquote>
+      <cite>— KV Moosa</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>Privacy is not something that I'm merely entitled to, it's an absolute prerequisite.</blockquote>
+      <cite>— Marlon Brando</cite>
+    </div>
+
+    <div class="quote-card">
+      <blockquote>Every system has a crack. The ethical hacker finds it before the criminal does — that's the difference between guardian and ghost.</blockquote>
+      <cite>— Anonymous</cite>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ROADMAPS -->
+<section id="roadmaps">
+  <p class="section-label">// 02 · YOUR PATH</p>
+  <h2 class="section-title">Choose Your Roadmap</h2>
+
+  <div class="roadmap-tabs">
+    <button class="tab-btn active" data-tab="offensive">⚔ Offensive Security</button>
+    <button class="tab-btn defensive" data-tab="defensive">🛡 Defensive Security</button>
+    <button class="tab-btn research" data-tab="research">🔬 Security Research</button>
+  </div>
+
+  <!-- OFFENSIVE -->
+  <div class="roadmap-panel active" id="tab-offensive">
+    <p class="roadmap-intro">Master the art of breaking systems legally. Offensive security practitioners — penetration testers, red teamers — think like attackers to expose weaknesses before criminals do.</p>
+    <ul class="steps-list">
+      <li class="step off">
+        <span class="step-num">01</span>
+        <div>
+          <div class="step-title">Fundamentals of Networking & OS</div>
+          <div class="step-desc">Learn TCP/IP, DNS, HTTP/S, how packets travel, subnetting, and how Linux & Windows work internally. This is your foundation — skip it and you'll crumble later.</div>
+          <div class="step-tags"><span class="tag">CompTIA Network+</span><span class="tag">Linux Basics</span><span class="tag">Networking Fundamentals</span></div>
+        </div>
+      </li>
+      <li class="step off">
+        <span class="step-num">02</span>
+        <div>
+          <div class="step-title">Programming & Scripting</div>
+          <div class="step-desc">Learn Python for automation and exploit scripting. Understand Bash for Linux workflows. Basic knowledge of C helps when reading exploits or shellcode.</div>
+          <div class="step-tags"><span class="tag">Python</span><span class="tag">Bash</span><span class="tag">C Basics</span></div>
+        </div>
+      </li>
+      <li class="step off">
+        <span class="step-num">03</span>
+        <div>
+          <div class="step-title">Security Fundamentals</div>
+          <div class="step-desc">Understand CIA Triad, common vulnerability types (OWASP Top 10, CVEs), cryptography basics, authentication mechanisms, and the attacker lifecycle (Cyber Kill Chain).</div>
+          <div class="step-tags"><span class="tag">OWASP Top 10</span><span class="tag">CompTIA Security+</span><span class="tag">Cryptography</span></div>
+        </div>
+      </li>
+      <li class="step off">
+        <span class="step-num">04</span>
+        <div>
+          <div class="step-title">Web Application Hacking</div>
+          <div class="step-desc">Learn to find and exploit SQLi, XSS, CSRF, IDOR, SSRF, broken auth, and business logic flaws. Practice on DVWA, Juice Shop, and HackTheBox web challenges.</div>
+          <div class="step-tags"><span class="tag">Burp Suite</span><span class="tag">DVWA</span><span class="tag">PortSwigger Labs</span></div>
+        </div>
+      </li>
+      <li class="step off">
+        <span class="step-num">05</span>
+        <div>
+          <div class="step-title">Network Penetration Testing</div>
+          <div class="step-desc">Perform active reconnaissance, port scanning, service enumeration, exploitation of vulnerable services, pivoting, and lateral movement in lab environments.</div>
+          <div class="step-tags"><span class="tag">Nmap</span><span class="tag">Metasploit</span><span class="tag">Wireshark</span></div>
+        </div>
+      </li>
+      <li class="step off">
+        <span class="step-num">06</span>
+        <div>
+          <div class="step-title">Active Directory & Windows Attacks</div>
+          <div class="step-desc">Master Kerberoasting, Pass-the-Hash, BloodHound, LDAP enumeration, privilege escalation on Windows — the bread and butter of enterprise red teaming.</div>
+          <div class="step-tags"><span class="tag">BloodHound</span><span class="tag">Mimikatz</span><span class="tag">PowerView</span></div>
+        </div>
+      </li>
+      <li class="step off">
+        <span class="step-num">07</span>
+        <div>
+          <div class="step-title">CTFs, Labs & Certifications</div>
+          <div class="step-desc">Solve Capture The Flag challenges, grind HackTheBox and TryHackMe machines, then validate your skills with OSCP — the gold standard of offensive certifications.</div>
+          <div class="step-tags"><span class="tag">HackTheBox</span><span class="tag">TryHackMe</span><span class="tag">OSCP</span><span class="tag">eJPT</span></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- DEFENSIVE -->
+  <div class="roadmap-panel" id="tab-defensive">
+    <p class="roadmap-intro">The defenders keep the lights on. Defensive security is about detection, response, and hardening — making the attacker's job as painful and costly as possible.</p>
+    <ul class="steps-list">
+      <li class="step def">
+        <span class="step-num">01</span>
+        <div>
+          <div class="step-title">Networking & OS Deep Dive</div>
+          <div class="step-desc">Understand network protocols at packet level, firewall rules, routing, VLANs, and both Windows and Linux system internals including processes, memory, and permissions.</div>
+          <div class="step-tags"><span class="tag">Wireshark</span><span class="tag">Packet Tracer</span><span class="tag">Linux CLI</span></div>
+        </div>
+      </li>
+      <li class="step def">
+        <span class="step-num">02</span>
+        <div>
+          <div class="step-title">Security Monitoring & Logging</div>
+          <div class="step-desc">Learn to collect, parse, and analyze logs from firewalls, endpoints, and servers. Understand Windows Event IDs and Linux syslog for detecting malicious activity.</div>
+          <div class="step-tags"><span class="tag">Splunk</span><span class="tag">ELK Stack</span><span class="tag">Windows Event Logs</span></div>
+        </div>
+      </li>
+      <li class="step def">
+        <span class="step-num">03</span>
+        <div>
+          <div class="step-title">Security Operations Center (SOC)</div>
+          <div class="step-desc">Learn SOC workflows: alert triage, escalation procedures, working with SIEMs and ticketing systems. Understand Tier 1, 2, 3 analyst responsibilities.</div>
+          <div class="step-tags"><span class="tag">SIEM</span><span class="tag">SOC Analyst</span><span class="tag">TryHackMe SOC Path</span></div>
+        </div>
+      </li>
+      <li class="step def">
+        <span class="step-num">04</span>
+        <div>
+          <div class="step-title">Threat Intelligence</div>
+          <div class="step-desc">Understand threat actor TTPs using MITRE ATT&CK framework. Learn to consume threat intel feeds, write detection rules (Sigma/Yara), and threat hunt proactively.</div>
+          <div class="step-tags"><span class="tag">MITRE ATT&CK</span><span class="tag">YARA</span><span class="tag">Sigma</span></div>
+        </div>
+      </li>
+      <li class="step def">
+        <span class="step-num">05</span>
+        <div>
+          <div class="step-title">Incident Response (IR)</div>
+          <div class="step-desc">Master the IR lifecycle: preparation, detection, containment, eradication, recovery, and lessons learned. Practice tabletop exercises and live IR simulations.</div>
+          <div class="step-tags"><span class="tag">Velociraptor</span><span class="tag">TheHive</span><span class="tag">NIST IR Framework</span></div>
+        </div>
+      </li>
+      <li class="step def">
+        <span class="step-num">06</span>
+        <div>
+          <div class="step-title">Digital Forensics (DFIR)</div>
+          <div class="step-desc">Analyze disk images, memory dumps, network captures, and browser artifacts. Reconstruct attacker timelines and preserve evidence correctly for legal use.</div>
+          <div class="step-tags"><span class="tag">Autopsy</span><span class="tag">Volatility</span><span class="tag">FTK Imager</span></div>
+        </div>
+      </li>
+      <li class="step def">
+        <span class="step-num">07</span>
+        <div>
+          <div class="step-title">Certifications & Career Path</div>
+          <div class="step-desc">Validate your defensive skills with industry-recognized certifications and build a portfolio with documented IR cases and detection engineering projects.</div>
+          <div class="step-tags"><span class="tag">CompTIA CySA+</span><span class="tag">BTL1</span><span class="tag">GCIH</span><span class="tag">GCIA</span></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- RESEARCH -->
+  <div class="roadmap-panel" id="tab-research">
+    <p class="roadmap-intro">Security researchers push the frontier — finding zero-days, publishing CVEs, reverse engineering malware, and advancing the knowledge of the entire field. This path demands deep technical mastery.</p>
+    <ul class="steps-list">
+      <li class="step res">
+        <span class="step-num">01</span>
+        <div>
+          <div class="step-title">Low-Level Programming</div>
+          <div class="step-desc">Master C, C++, and Assembly. Understand memory layout (stack, heap, BSS), calling conventions, pointers, and manual memory management — the language of exploits.</div>
+          <div class="step-tags"><span class="tag">C/C++</span><span class="tag">x86 Assembly</span><span class="tag">NASM</span></div>
+        </div>
+      </li>
+      <li class="step res">
+        <span class="step-num">02</span>
+        <div>
+          <div class="step-title">Reverse Engineering</div>
+          <div class="step-desc">Learn to disassemble and decompile binaries. Analyze unknown executables, understand obfuscation techniques, and reconstruct source logic from machine code.</div>
+          <div class="step-tags"><span class="tag">Ghidra</span><span class="tag">IDA Pro</span><span class="tag">Binary Ninja</span></div>
+        </div>
+      </li>
+      <li class="step res">
+        <span class="step-num">03</span>
+        <div>
+          <div class="step-title">Binary Exploitation</div>
+          <div class="step-desc">Study buffer overflows, format string bugs, use-after-free, heap exploitation, ret2libc, ROP chains, and how to bypass modern mitigations like ASLR, DEP, and stack canaries.</div>
+          <div class="step-tags"><span class="tag">GDB + PEDA</span><span class="tag">pwntools</span><span class="tag">pwn.college</span></div>
+        </div>
+      </li>
+      <li class="step res">
+        <span class="step-num">04</span>
+        <div>
+          <div class="step-title">Malware Analysis</div>
+          <div class="step-desc">Set up safe sandbox environments, perform static and dynamic analysis of malware samples, extract IOCs, understand packing/unpacking, and analyze C2 communications.</div>
+          <div class="step-tags"><span class="tag">Cuckoo Sandbox</span><span class="tag">ANY.RUN</span><span class="tag">FLOSS</span></div>
+        </div>
+      </li>
+      <li class="step res">
+        <span class="step-num">05</span>
+        <div>
+          <div class="step-title">Vulnerability Discovery</div>
+          <div class="step-desc">Learn fuzzing with AFL++ and libFuzzer, code auditing, static analysis tools, and how to systematically hunt for bugs in real open-source and commercial software.</div>
+          <div class="step-tags"><span class="tag">AFL++</span><span class="tag">Sanitizers</span><span class="tag">Semgrep</span></div>
+        </div>
+      </li>
+      <li class="step res">
+        <span class="step-num">06</span>
+        <div>
+          <div class="step-title">CVE Research & Responsible Disclosure</div>
+          <div class="step-desc">Understand the full vulnerability lifecycle — discovery, PoC development, coordinated disclosure, CVE assignment, and publication. Start with Bug Bounty programs as training ground.</div>
+          <div class="step-tags"><span class="tag">HackerOne</span><span class="tag">Bugcrowd</span><span class="tag">CVE Process</span></div>
+        </div>
+      </li>
+      <li class="step res">
+        <span class="step-num">07</span>
+        <div>
+          <div class="step-title">Publish, Present & Contribute</div>
+          <div class="step-desc">Write technical blog posts, present at DEF CON or local security meetups, contribute tools to open source, and build a public research portfolio that speaks for itself.</div>
+          <div class="step-tags"><span class="tag">DEF CON</span><span class="tag">Black Hat</span><span class="tag">GitHub</span><span class="tag">OSCP</span></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <p class="section-label">// 03 · CONNECT</p>
+  <h2 class="section-title">Get In Touch</h2>
+  <div class="contact-box">
+    <div class="contact-icon">◈</div>
+    <div class="contact-handle">KV MOOSA</div>
+    <p style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:0.15em;">CYBERSECURITY · ETHICAL HACKING</p>
+    <a class="contact-link" href="https://www.instagram.com/smash_or_die_29_0" target="_blank" rel="noopener noreferrer">
+      ↗ &nbsp; @smash_or_die_29_0 &nbsp; on Instagram
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span style="color:var(--accent)">KV MOOSA</span> &nbsp;·&nbsp; BUILT WITH PURPOSE &nbsp;·&nbsp; STAY ETHICAL &nbsp;·&nbsp; STAY DANGEROUS
+</footer>
+
+<script>
+  // ── TAB SWITCHING ──
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const panels  = document.querySelectorAll('.roadmap-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.quote-card, .step').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
