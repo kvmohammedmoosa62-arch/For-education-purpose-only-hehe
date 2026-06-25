@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>CyberAcademy — Reactive · Ghost & Skull</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #050a0f; --bg2: #0a1520; --bg3: #0f1e2d; --card: #0d1a26;
+      --accent: #00d4ff; --accent2: #ff3e3e; --accent3: #00ff88;
+      --text: #e0eaf5; --muted: #5a7a96; --border: rgba(0,212,255,0.15);
+      --border2: rgba(0,212,255,0.3);
+      --mono: 'Share Tech Mono', monospace; --head: 'Rajdhani', sans-serif; --body: 'Inter', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--body); overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(5,10,15,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between;
+      height: 60px; flex-wrap: nowrap;
+    }
+    .nav-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); letter-spacing: 2px; text-decoration: none; }
+    .nav-logo span { color: var(--accent2); }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; flex-wrap: wrap; }
+    .nav-links a { font-family: var(--head); font-size: 0.8rem; font-weight: 500; color: var(--muted); text-decoration: none; letter-spacing: 1px; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { font-family: var(--mono); font-size: 0.7rem; color: var(--accent); border: 1px solid var(--accent); padding: 4px 14px; text-decoration: none; letter-spacing: 1px; transition: all 0.2s; white-space: nowrap; }
+    .nav-cta:hover { background: var(--accent); color: #000; }
+    @media (max-width: 720px) { .nav-links { display: none; } nav { padding: 0 1rem; } }
+
+    /* HERO */
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6rem 1.5rem 3rem; position: relative; overflow: hidden; }
+    .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px); background-size: 40px 40px; animation: gridPulse 6s ease-in-out infinite; }
+    @keyframes gridPulse { 0%,100%{opacity:0.5}50%{opacity:1} }
+    .hero-glow { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: glowPulse 4s ease-in-out infinite; }
+    @keyframes glowPulse { 0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.6}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1} }
+    .hero-badge { font-family: var(--mono); font-size: 0.7rem; color: var(--accent3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 8px; }
+    .hero-badge::before { content: ''; display: inline-block; width: 8px; height: 8px; background: var(--accent3); border-radius: 50%; animation: blink 1.2s infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+    .hero h1 { font-family: var(--head); font-size: clamp(2.2rem, 7vw, 4.8rem); font-weight: 700; line-height: 1.05; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .hero h1 .line1 { color: var(--text); }
+    .hero h1 .line2 { color: var(--accent); text-shadow: 0 0 40px rgba(0,212,255,0.5); }
+    .hero h1 .line3 { color: var(--accent2); text-shadow: 0 0 40px rgba(255,62,62,0.4); }
+    .hero-sub { font-size: 1rem; color: var(--muted); max-width: 580px; line-height: 1.7; margin-bottom: 2.5rem; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn-primary { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 1px; color: #000; background: var(--accent); border: none; padding: 12px 28px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); }
+    .btn-primary:hover { background: #fff; box-shadow: 0 0 30px rgba(0,212,255,0.4); }
+    .btn-secondary { font-family: var(--mono); font-size: 0.8rem; letter-spacing: 1px; color: var(--accent); background: transparent; border: 1px solid var(--border2); padding: 12px 28px; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s; clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%); }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+    .hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; flex-wrap: wrap; justify-content: center; }
+    .stat-num { font-family: var(--mono); font-size: 1.8rem; color: var(--accent); display: block; }
+    .stat-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; margin-top: 4px; }
+    .ghost-skull { font-size: 2.4rem; line-height: 1; filter: drop-shadow(0 0 8px rgba(0,212,255,0.3)); }
+
+    /* TICKER */
+    .ticker { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 10px 0; overflow: hidden; white-space: nowrap; }
+    .ticker-inner { display: inline-block; animation: ticker 30s linear infinite; }
+    .ticker-inner span { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin: 0 2rem; }
+    .ticker-inner span.highlight { color: var(--accent3); }
+    .ticker-inner span.danger { color: var(--accent2); }
+    @keyframes ticker { 0%{transform:translateX(0)}100%{transform:translateX(-50%)} }
+
+    /* SECTIONS */
+    section { padding: 4rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+    .section-label { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; }
+    .section-label::before { content: '//'; color: var(--muted); }
+    .section-title { font-family: var(--head); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.75rem; }
+    .section-desc { color: var(--muted); font-size: 0.95rem; max-width: 560px; line-height: 1.7; margin-bottom: 2.5rem; }
+
+    /* PATHS */
+    .paths-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+    .path-card { background: var(--card); border: 1px solid var(--border); padding: 2rem; position: relative; overflow: hidden; cursor: pointer; transition: all 0.3s; }
+    .path-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; }
+    .path-card.offensive::before { background: var(--accent2); }
+    .path-card.defensive::before { background: var(--accent3); }
+    .path-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .path-icon { font-size: 2.2rem; margin-bottom: 0.8rem; display: block; }
+    .path-tag { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; padding: 4px 10px; margin-bottom: 0.8rem; display: inline-block; }
+    .path-card.offensive .path-tag { color: var(--accent2); border: 1px solid rgba(255,62,62,0.3); background: rgba(255,62,62,0.06); }
+    .path-card.defensive .path-tag { color: var(--accent3); border: 1px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.06); }
+    .path-title { font-family: var(--head); font-size: 1.4rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.5rem; }
+    .path-desc { color: var(--muted); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.2rem; }
+    .path-topics { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .path-topics li { font-family: var(--mono); font-size: 0.72rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .path-topics li::before { content: '▸'; font-size: 0.6rem; }
+    .path-card.offensive .path-topics li::before { color: var(--accent2); }
+    .path-card.defensive .path-topics li::before { color: var(--accent3); }
+    @media (max-width: 720px) { .paths-grid { grid-template-columns: 1fr; } }
+
+    /* MODULES */
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5px; }
+    .module-card { background: var(--card); border: 1px solid var(--border); padding: 1.5rem; transition: all 0.3s; }
+    .module-card:hover { border-color: var(--border2); background: var(--bg3); }
+    .module-num { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 2px; margin-bottom: 0.5rem; }
+    .module-icon { font-size: 1.6rem; margin-bottom: 0.5rem; display: block; }
+    .module-name { font-family: var(--head); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem; }
+    .module-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .module-diff { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 2px; margin-top: 0.8rem; padding: 2px 8px; display: inline-block; }
+    .diff-beginner { color: var(--accent3); border: 1px solid rgba(0,255,136,0.2); }
+    .diff-intermediate { color: #ffd700; border: 1px solid rgba(255,215,0,0.2); }
+    .diff-advanced { color: var(--accent2); border: 1px solid rgba(255,62,62,0.2); }
+
+    /* TERMINAL DEMO */
+    .terminal-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 4rem 1.5rem; }
+    .terminal-section > div { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
+    @media (max-width: 780px) { .terminal-section > div { grid-template-columns: 1fr; } }
+    .terminal-window { background: #000; border: 1px solid rgba(0,212,255,0.2); border-radius: 4px; overflow: hidden; font-family: var(--mono); }
+    .terminal-bar { background: #0d1a26; padding: 8px 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f56; }
+    .dot.y { background: #ffbd2e; }
+    .dot.g { background: #27c93f; }
+    .terminal-title { font-size: 0.65rem; color: var(--muted); margin-left: 8px; letter-spacing: 1px; }
+    .terminal-body { padding: 1rem; font-size: 0.75rem; line-height: 1.8; min-height: 220px; }
+    .t-prompt { color: var(--accent3); }
+    .t-cmd { color: var(--text); }
+    .t-out { color: var(--muted); }
+    .t-highlight { color: var(--accent); }
+    .t-danger { color: var(--accent2); }
+    .t-cursor { display: inline-block; width: 6px; height: 12px; background: var(--accent); animation: blink 1s infinite; vertical-align: middle; }
+
+    /* TOOLS */
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; }
+    .tool-pill { background: var(--card); border: 1px solid var(--border); padding: 0.8rem 1rem; display: flex; align-items: center; gap: 8px; transition: all 0.2s; cursor: default; }
+    .tool-pill:hover { border-color: var(--border2); background: var(--bg3); }
+    .tool-icon { font-size: 1.2rem; }
+    .tool-name { font-family: var(--mono); font-size: 0.7rem; color: var(--text); letter-spacing: 1px; }
+
+    /* ROADMAP */
+    .roadmap-wrap { background: var(--bg2); padding: 4rem 1.5rem; }
+    .roadmap-wrap > div { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    @media (max-width: 780px) { .roadmap-wrap > div { grid-template-columns: 1fr; } }
+    .roadmap { position: relative; padding-left: 1.5rem; }
+    .roadmap::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 1px; background: linear-gradient(to bottom, var(--accent), var(--accent3), var(--accent)); opacity: 0.3; }
+    .roadmap-item { position: relative; padding: 1.2rem 0 1.2rem 1.8rem; border-bottom: 1px solid var(--border); }
+    .roadmap-item:last-child { border-bottom: none; }
+    .roadmap-dot { position: absolute; left: -5px; top: 1.5rem; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+    .roadmap-dot.done { background: var(--accent); }
+    .roadmap-dot.active { background: var(--accent3); border-color: var(--accent3); box-shadow: 0 0 10px rgba(0,255,136,0.5); }
+    .roadmap-phase { font-family: var(--mono); font-size: 0.6rem; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 2px; }
+    .roadmap-title { font-family: var(--head); font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+    .roadmap-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+
+    /* QUIZ */
+    .quiz-box { background: var(--card); border: 1px solid var(--border); padding: 1.8rem; }
+    .quiz-q { font-family: var(--head); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.2rem; line-height: 1.4; }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.2rem; }
+    .quiz-opt { font-family: var(--mono); font-size: 0.8rem; color: var(--text); background: var(--bg2); border: 1px solid var(--border); padding: 10px 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; text-align: left; }
+    .quiz-opt:hover { border-color: var(--accent); color: var(--accent); }
+    .quiz-opt.correct { border-color: var(--accent3); color: var(--accent3); background: rgba(0,255,136,0.05); }
+    .quiz-opt.wrong { border-color: var(--accent2); color: var(--accent2); background: rgba(255,62,62,0.05); }
+    .quiz-opt-key { width: 22px; height: 22px; border: 1px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; flex-shrink: 0; }
+    .quiz-feedback { font-family: var(--mono); font-size: 0.75rem; padding: 8px 12px; display: none; }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { color: var(--accent3); border: 1px solid rgba(0,255,136,0.2); background: rgba(0,255,136,0.05); }
+    .quiz-feedback.wrong { color: var(--accent2); border: 1px solid rgba(255,62,62,0.2); background: rgba(255,62,62,0.05); }
+
+    /* CONTACT */
+    .contact-section { background: var(--bg2); border-top: 1px solid var(--border); padding: 4rem 1.5rem; text-align: center; }
+    .contact-card { display: inline-flex; flex-direction: column; align-items: center; background: var(--card); border: 1px solid var(--border); padding: 2rem 3rem; margin-top: 1.5rem; position: relative; overflow: hidden; }
+    .contact-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3)); }
+    .insta-icon { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); display: flex; align-items: center; justify-content: center; margin-bottom: 0.8rem; font-size: 1.4rem; }
+    .contact-handle { font-family: var(--mono); font-size: 1rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 0.3rem; text-decoration: none; }
+    .contact-handle:hover { color: #fff; }
+    .contact-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
+    .contact-link { font-family: var(--mono); font-size: 0.75rem; color: #000; background: linear-gradient(135deg, #f09433, #dc2743, #bc1888); padding: 8px 24px; text-decoration: none; letter-spacing: 1px; transition: opacity 0.2s; clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%); }
+    .contact-link:hover { opacity: 0.85; }
+
+    /* FOOTER */
+    footer { background: var(--bg); border-top: 1px solid var(--border); padding: 2rem 1.5rem; text-align: center; }
+    .footer-logo { font-family: var(--mono); font-size: 1rem; color: var(--accent); letter-spacing: 3px; margin-bottom: 0.8rem; display: block; }
+    .footer-logo span { color: var(--accent2); }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; list-style: none; margin-bottom: 1rem; flex-wrap: wrap; }
+    .footer-links a { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); opacity: 0.5; }
+
+    /* DISCLAIMER */
+    .disclaimer { background: rgba(255,62,62,0.05); border: 1px solid rgba(255,62,62,0.2); padding: 0.8rem 1.2rem; margin-bottom: 2rem; display: flex; align-items: flex-start; gap: 10px; }
+    .disclaimer-icon { font-size: 1rem; flex-shrink: 0; }
+    .disclaimer p { font-family: var(--mono); font-size: 0.7rem; color: rgba(255,62,62,0.8); line-height: 1.5; letter-spacing: 0.5px; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .tab-btn { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); background: transparent; border: none; border-bottom: 2px solid transparent; padding: 10px 16px; cursor: pointer; transition: all 0.2s; margin-bottom: -1px; }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .fade-in { opacity: 0; transform: translateY(16px); transition: all 0.5s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* extra ghost skulls */
+    .ghost-row { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; margin: 1.2rem 0 0.5rem; }
+    .ghost-row span { font-size: 2rem; filter: drop-shadow(0 0 6px rgba(0,212,255,0.3)); }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="#" class="nav-logo">CYBER<span>&#123;ACADEMY&#125;</span></a>
+  <ul class="nav-links">
+    <li><a href="#paths">Paths</a></li>
+    <li><a href="#modules">Modules</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#paths" class="nav-cta">START</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-grid"></div><div class="hero-glow"></div>
+  <div class="hero-badge">SYSTEM ONLINE — GHOST MODE</div>
+  <div class="ghost-row"><span>👻</span><span>💀</span><span>👻</span><span>☠️</span><span>👻</span><span>💀</span></div>
+  <h1><span class="line1">MASTER THE ART OF</span><br><span class="line2">CYBERSECURITY</span><br><span class="line3">ATTACK &amp; DEFEND</span></h1>
+  <p class="hero-sub">From zero to elite. Offensive &amp; defensive tactics — every tool, every command, every tutorial. Click any option to dive deep.</p>
+  <div class="hero-btns">
+    <a href="#paths" class="btn-primary">⚔️ ENTER THE MATRIX</a>
+    <a href="#roadmap" class="btn-secondary">🗺️ VIEW ROADMAP</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">120+</span><span class="stat-label">Lessons</span></div>
+    <div class="stat"><span class="stat-num">2</span><span class="stat-label">Paths</span></div>
+    <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Tools</span></div>
+    <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Knowledge</span></div>
+  </div>
+  <div class="ghost-row"><span>💀</span><span>👻</span><span>☠️</span><span>👻</span><span>💀</span><span>👻</span></div>
+</div>
+
+<div class="ticker"><div class="ticker-inner">
+  <span class="highlight">[ GHOST MODE ]</span><span>Penetration Testing ◆</span><span>Network Security ◆</span><span class="danger">SQL Injection ◆</span><span>Firewall ◆</span><span>Malware ◆</span><span class="highlight">Ethical Hacking ◆</span><span>CTF ◆</span><span>SIEM &amp; SOC ◆</span><span class="danger">Buffer Overflow ◆</span><span>Cryptography ◆</span><span>OSINT ◆</span><span>Zero-Day ◆</span><span class="highlight">[ LEARN BY DOING ]</span>
+  <span>Penetration Testing ◆</span><span>Network Security ◆</span><span class="danger">SQL Injection ◆</span><span>Firewall ◆</span><span>Malware ◆</span><span class="highlight">Ethical Hacking ◆</span><span>CTF ◆</span><span>SIEM &amp; SOC ◆</span><span class="danger">Buffer Overflow ◆</span><span>Cryptography ◆</span><span>OSINT ◆</span><span>Zero-Day ◆</span>
+</div></div>
+
+<section id="paths">
+  <div class="section-label">Core Paths</div>
+  <h2 class="section-title">Choose Your <span style="color:var(--accent)">Discipline</span></h2>
+  <p class="section-desc">Two sides of the same coin. Click any card to see full tutorials, commands, and definitions.</p>
+  <div class="disclaimer"><span class="disclaimer-icon">⚠</span><p>All content strictly educational. Unauthorized access illegal. Always get proper authorization.</p></div>
+  <div class="paths-grid">
+    <div class="path-card offensive fade-in" onclick="openTutorial('offensive')">
+      <span class="path-icon">🗡</span><span class="path-tag">Offensive Security</span>
+      <h3 class="path-title">Red Team<br>Operations</h3>
+      <p class="path-desc">Think like an attacker. Exploit, pivot, report. Full tutorials inside.</p>
+      <ul class="path-topics">
+        <li>Recon &amp; OSINT</li><li>Network Scanning</li><li>Exploitation</li><li>Web Attacks</li><li>Post-Exploit</li>
+      </ul>
+    </div>
+    <div class="path-card defensive fade-in" onclick="openTutorial('defensive')">
+      <span class="path-icon">🛡</span><span class="path-tag">Defensive Security</span>
+      <h3 class="path-title">Blue Team<br>Operations</h3>
+      <p class="path-desc">Guard the perimeter. Detect, respond, recover. Step-by-step guides.</p>
+      <ul class="path-topics">
+        <li>SIEM &amp; Monitoring</li><li>Incident Response</li><li>Forensics</li><li>IDS/IPS</li><li>Hardening</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="modules" style="background:var(--bg2); max-width:100%; padding:4rem 1.5rem;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-label">Learning Modules</div>
+    <h2 class="section-title">What You'll <span style="color:var(--accent)">Master</span></h2>
+    <p class="section-desc">Click any module for a deep-dive tutorial with commands and definitions.</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('all', this)">ALL</button>
+      <button class="tab-btn" onclick="switchTab('offensive', this)">OFFENSIVE</button>
+      <button class="tab-btn" onclick="switchTab('defensive', this)">DEFENSIVE</button>
+    </div>
+    <div class="modules-grid" id="modules-grid"></div>
+  </div>
+</section>
+
+<div class="terminal-section">
+  <div>
+    <div>
+      <div class="section-label">Live Demo</div>
+      <h2 class="section-title">Learn by <span style="color:var(--accent)">Doing</span></h2>
+      <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.2rem;">Interactive terminal with real commands. Click any tool name to see its tutorial.</p>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);"><span style="color:var(--accent3)">✓</span> Simulated attack environments</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);"><span style="color:var(--accent3)">✓</span> Step-by-step walkthroughs</li>
+        <li style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--muted);"><span style="color:var(--accent3)">✓</span> Real tool syntax &amp; output</li>
+      </ul>
+    </div>
+    <div class="terminal-window">
+      <div class="terminal-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><span class="terminal-title">kali@academy:~$</span></div>
+      <div class="terminal-body" id="terminal-demo">
+        <div><span class="t-prompt">┌──(kali㉿academy)-[~]</span></div>
+        <div><span class="t-prompt">└─$</span> <span class="t-cmd">nmap -sV -p 22,80,443 192.168.1.1</span></div>
+        <div class="t-out">Starting Nmap 7.94</div>
+        <div class="t-out">22/tcp open  ssh  OpenSSH 8.9</div>
+        <div class="t-out">80/tcp open  http  Apache 2.4.54</div>
+        <div class="t-danger">443/tcp open  https Expired SSL!</div>
+        <div><span class="t-prompt">└─$</span> <span class="t-cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="tools">
+  <div class="section-label">Arsenal</div>
+  <h2 class="section-title">Essential <span style="color:var(--accent)">Tools</span></h2>
+  <p class="section-desc">Click any tool for a full tutorial: what it is, commands, and how to use it.</p>
+  <div class="tools-grid" id="tools-grid"></div>
+</section>
+
+<div class="roadmap-wrap" id="roadmap">
+  <div>
+    <div><div class="section-label">Learning Path</div><h2 class="section-title">Your <span style="color:var(--accent)">Roadmap</span></h2><p style="color:var(--muted);font-size:0.9rem;line-height:1.7;">Click any phase for a detailed tutorial.</p></div>
+    <div class="roadmap" id="roadmapContainer"></div>
+  </div>
+</div>
+
+<section id="quiz">
+  <div class="section-label">Test Your Knowledge</div>
+  <h2 class="section-title">Quick <span style="color:var(--accent)">Challenge</span></h2>
+  <p class="section-desc">New questions every session. Click answer to learn.</p>
+  <div class="quiz-box" id="quiz-box">
+    <div class="quiz-q" id="quiz-question"></div>
+    <div class="quiz-options" id="quiz-options"></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div style="margin-top:1.2rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+      <button onclick="nextQuestion()" style="font-family:var(--mono);font-size:0.7rem;letter-spacing:1px;color:var(--accent);background:transparent;border:1px solid var(--border2);padding:8px 18px;cursor:pointer;transition:all 0.2s;">NEXT →</button>
+      <span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);" id="quiz-score">Score: 0 / 0</span>
+    </div>
+  </div>
+</section>
+
+<div class="contact-section" id="contact">
+  <div><div class="section-label" style="justify-content:center">Connect</div>
+    <h2 class="section-title" style="text-align:center;">Find the <span style="color:var(--accent)">Creator</span></h2>
+    <p style="color:var(--muted);font-size:0.85rem;text-align:center;max-width:500px;margin:0 auto 0.5rem;">Questions, feedback, cyber chat — hit me up.</p>
+    <div style="display:flex;justify-content:center;">
+      <div class="contact-card">
+        <div class="insta-icon">📸</div>
+        <a href="#" class="contact-handle">@smash_or_die_29_0</a>
+        <div class="contact-label">Instagram · Creator</div>
+        <a href="#" class="contact-link">FOLLOW</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">CYBER<span>{ACADEMY}</span></span>
+  <ul class="footer-links"><li><a href="#paths">Paths</a></li><li><a href="#modules">Modules</a></li><li><a href="#tools">Tools</a></li><li><a href="#roadmap">Roadmap</a></li><li><a href="#quiz">Quiz</a></li><li><a href="#contact">Contact</a></li></ul>
+  <p class="footer-copy">© 2025 CyberAcademy — Educational purposes only. 👻💀</p>
+</footer>
+
+<script>
+  // ---------- DATA ----------
+  const modules = [
+    { num:'01', icon:'🌐', name:'Networking Basics', desc:'TCP/IP, OSI, DNS, HTTP. Full commands: ping, traceroute, netstat.', diff:'beginner', type:'defensive' },
+    { num:'02', icon:'🐧', name:'Linux for Hackers', desc:'Bash, permissions, scripts. Commands: chmod, grep, awk, sed.', diff:'beginner', type:'offensive' },
+    { num:'03', icon:'🔍', name:'Recon & OSINT', desc:'Passive recon, theHarvester, Shodan, Google dorks.', diff:'beginner', type:'offensive' },
+    { num:'04', icon:'📡', name:'Network Scanning', desc:'Nmap deep dive: -sS, -sV, -p, -A, -O, script scanning.', diff:'intermediate', type:'offensive' },
+    { num:'05', icon:'🌍', name:'Web App Security', desc:'OWASP Top 10, SQLmap, Burp Suite, XSS, CSRF, IDOR.', diff:'intermediate', type:'offensive' },
+    { num:'06', icon:'💣', name:'Exploitation 101', desc:'Metasploit: use, set, exploit, meterpreter, post modules.', diff:'intermediate', type:'offensive' },
+    { num:'07', icon:'🔐', name:'Cryptography', desc:'Hashing, encryption, OpenSSL, hashcat, John the Ripper.', diff:'intermediate', type:'defensive' },
+    { num:'08', icon:'🛡', name:'Firewall & IDS', desc:'Snort, Suricata, iptables, pfSense rules and config.', diff:'intermediate', type:'defensive' },
+    { num:'09', icon:'📊', name:'SIEM & Logs', desc:'Splunk, ELK, query building, correlation, alerts.', diff:'intermediate', type:'defensive' },
+    { num:'10', icon:'🧬', name:'Malware Analysis', desc:'Static/dynamic analysis, strings, strace, sandbox.', diff:'advanced', type:'defensive' },
+    { num:'11', icon:'🏴', name:'Privilege Escalation', desc:'Linux privesc: sudo, SUID, cron, kernel exploits. Windows: whoami, powershell.', diff:'advanced', type:'offensive' },
+    { num:'12', icon:'🧩', name:'CTF Strategy', desc:'Pwn, crypto, forensics, web. Tools: pwntools, binwalk, steghide.', diff:'advanced', type:'offensive' },
+  ];
+
+  const tools = [
+    { icon:'🔍', name:'Nmap' }, { icon:'💣', name:'Metasploit' }, { icon:'🕷', name:'Burp Suite' },
+    { icon:'📡', name:'Wireshark' }, { icon:'🔐', name:'Hashcat' }, { icon:'🧠', name:'SQLmap' },
+    { icon:'🌐', name:'Nikto' }, { icon:'🔑', name:'John the Ripper' }, { icon:'🛡', name:'Snort' },
+    { icon:'📊', name:'Splunk' }, { icon:'🕵', name:'Maltego' }, { icon:'💻', name:'Kali Linux' },
+    { icon:'🦜', name:'Parrot OS' }, { icon:'🔎', name:'Shodan' }, { icon:'🪝', name:'Aircrack-ng' },
+    { icon:'📁', name:'Gobuster' }
+  ];
+
+  const roadmapData = [
+    { phase:'Phase 01', title:'Foundations', desc:'Networking, Linux CLI, protocols. Commands: ifconfig, ping, netstat.' },
+    { phase:'Phase 02', title:'Reconnaissance', desc:'OSINT, Nmap, Shodan, theHarvester. Passive & active.' },
+    { phase:'Phase 03', title:'Vulnerability Analysis', desc:'Nessus, OpenVAS, CVE databases. Manual checks.' },
+    { phase:'Phase 04', title:'Exploitation', desc:'Metasploit, SQLi, XSS, buffer overflows, privesc.' },
+    { phase:'Phase 05', title:'Defense & Response', desc:'SIEM, log analysis, forensics, hardening, IR.' },
+    { phase:'Phase 06', title:'Elite Operations', desc:'Red/Blue, CTF, OSCP prep. Full hands-on.' }
+  ];
+
+  const quizQuestions = [
+    { q: 'What does SQL injection exploit?', options: ['Weak passwords', 'Unsanitized queries', 'Open ports', 'Outdated AV'], answer: 1, explain: 'Unsanitized input passed to database queries.' },
+    { q: 'Which port does SSH use?', options: ['21', '23', '22', '80'], answer: 2, explain: 'SSH uses port 22.' },
+    { q: 'What is a zero-day?', options: ['Bug with no CVE', 'Unknown flaw, no patch', 'Server uptime 0 days', 'Expired SSL'], answer: 1, explain: 'Vulnerability unknown to vendor.' },
+    { q: 'What does OSINT stand for?', options: ['Open Source Intelligence', 'Online Security Interception', 'Offensive System Intrusion', 'Operational Integration'], answer: 0, explain: 'Open Source Intelligence.' },
+    { q: 'Which is a network scanner?', options: ['Burp Suite', 'Hashcat', 'Nmap', 'John'], answer: 2, explain: 'Nmap is the network mapper.' },
+  ];
+
+  // ---------- RENDER FUNCTIONS ----------
+  function renderModules(filter) {
+    const grid = document.getElementById('modules-grid');
+    const filtered = filter === 'all' ? modules : modules.filter(m => m.type === filter);
+    grid.innerHTML = filtered.map(m => `
+      <div class="module-card fade-in" onclick="openTutorial('${m.name}')">
+        <div class="module-num">MODULE ${m.num}</div>
+        <span class="module-icon">${m.icon}</span>
+        <div class="module-name">${m.name}</div>
+        <div class="module-desc">${m.desc}</div>
+        <span class="module-diff diff-${m.diff}">${m.diff.toUpperCase()}</span>
+        <div style="margin-top:8px;font-size:0.7rem;color:var(--accent);cursor:pointer;">📖 click for tutorial</div>
+      </div>
+    `).join('');
+    observeFadeIns();
+  }
+
+  function renderTools() {
+    const grid = document.getElementById('tools-grid');
+    grid.innerHTML = tools.map(t => `
+      <div class="tool-pill" onclick="openTutorial('${t.name}')" style="cursor:pointer;">
+        <span class="tool-icon">${t.icon}</span>
+        <span class="tool-name">${t.name}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderRoadmap() {
+    const container = document.getElementById('roadmapContainer');
+    container.innerHTML = roadmapData.map((item, idx) => `
+      <div class="roadmap-item" onclick="openTutorial('${item.title}')" style="cursor:pointer;">
+        <div class="roadmap-dot ${idx === 1 ? 'active' : idx === 0 ? 'done' : ''}"></div>
+        <div class="roadmap-phase">${item.phase}</div>
+        <div class="roadmap-title">${item.title}</div>
+        <div class="roadmap-desc">${item.desc}</div>
+        <div style="font-size:0.6rem;color:var(--accent);margin-top:4px;">📖 click for tutorial</div>
+      </div>
+    `).join('');
+  }
+
+  // ---------- TUTORIAL POPUP (reactive) ----------
+  function openTutorial(topic) {
+    const tutorials = {
+      'offensive': `⚔️ OFFENSIVE SECURITY TUTORIAL\n\nRecon: theHarvester -d target.com -b google\nNmap: nmap -sV -p- target\nMetasploit: msfconsole > use exploit/windows/smb/ms17_010_eternalblue\n\nAlways get authorization.`,
+      'defensive': `🛡️ DEFENSIVE SECURITY TUTORIAL\n\nSIEM: Splunk query: index=main sourcetype=access_combined\nIDS: snort -A console -q -c /etc/snort/snort.conf\nForensics: strings suspicious.exe | grep -i "password"\n\nStay vigilant.`,
+      'Metasploit': `💣 METASPLOIT TUTORIAL\n\nStart: msfconsole\nSearch: search type:exploit name:windows\nUse: use exploit/windows/smb/ms17_010_eternalblue\nSet: set RHOSTS 192.168.1.10\nExploit: run\nPost: meterpreter > sysinfo\n\nEthical use only.`,
+      'Nmap': `🔍 NMAP TUTORIAL\n\nPing scan: nmap -sn 192.168.1.0/24\nPort scan: nmap -sS -p- 192.168.1.1\nVersion: nmap -sV -p 22,80,443 192.168.1.1\nOS detect: nmap -O 192.168.1.1\nScripts: nmap --script vuln 192.168.1.1\n\nLearn the flags!`,
+      'Burp Suite': `🕷 BURP SUITE TUTORIAL\n\nProxy: set browser to localhost:8080\nIntercept: turn on intercept, capture requests\nRepeater: send request, modify, resend\nIntruder: brute force parameters\nScanner: automated vulnerability scanning\n\nPractice on DVWA or HackTheBox.`,
+      'Wireshark': `📡 WIRESHARK TUTORIAL\n\nCapture: select interface, start capture\nFilter: tcp.port == 80, ip.src == 192.168.1.1\nFollow TCP stream: see full conversation\nStats: protocol hierarchy, endpoints\nExport: save packets for analysis\n\nGreat for network forensics.`,
+      'Hashcat': `🔐 HASHCAT TUTORIAL\n\nHashcat -m 0 -a 0 hash.txt rockyou.txt\n-m 0 = MD5, 100 = SHA1, 1400 = SHA256\n-a 0 = dictionary attack\nShow cracked: --show\nBenchmark: -b\n\nUse with care.`,
+      'SQLmap': `🧠 SQLMAP TUTORIAL\n\nBasic: sqlmap -u "http://target/page?id=1" --dbs\nTables: --tables -D database\nDump: --dump -D database -T users\nLevel: --level 2 --risk 2\nShell: --os-shell (if permissions)\n\nOnly on authorized targets.`,
+      'Nikto': `🌐 NIKTO TUTORIAL\n\nScan: nikto -h http://target.com\nSSL: -ssl\nPort: -p 443\nOutput: -o result.txt\nUpdate: nikto -update\n\nWeb server vulnerability scanner.`,
+      'John the Ripper': `🔑 JOHN THE RIPPER TUTORIAL\n\nUnshadow: unshadow passwd shadow > hashes.txt\nCrack: john --wordlist=rockyou.txt hashes.txt\nShow: john --show hashes.txt\nFormat: --format=md5crypt\n\nPassword cracking for education.`,
+      'Snort': `🛡 SNORT TUTORIAL\n\nIDS mode: snort -A console -q -c /etc/snort/snort.conf\nRead pcap: snort -r capture.pcap -c /etc/snort/snort.conf\nRules: alert tcp any any -> any 80 (msg:"Web traffic"; sid:100001;)\n\nOpen-source IDS.`,
+      'Splunk': `📊 SPLUNK TUTORIAL\n\nSearch: index=main sourcetype=access_combined status=404\nStats: stats count by src_ip\nTimechart: timechart count by action\nDashboard: create visualizations\nAlert: set up email alerts\n\nSIEM powerhouse.`,
+      'Maltego': `🕵 MALLEGO TUTORIAL\n\nTransform: run DNS, email, social transforms\nGraph: visualize connections\nEntities: domains, IPs, people\nExport: save graph as image\n\nOSINT and link analysis.`,
+      'Kali Linux': `💻 KALI LINUX TUTORIAL\n\nInstall: download from kali.org, boot live or install\nTools: all tools are pre-installed\nUpdate: sudo apt update && sudo apt upgrade\nCommands: nmap, msfconsole, wireshark, etc.\n\nPenetration testing distribution.`,
+      'Parrot OS': `🦜 PARROT OS TUTORIAL\n\nSimilar to Kali, with anonymity focus\nTools: same as Kali + tor, anonsurf\nInstall: live or VM\nUpdate: sudo parrot-upgrade\n\nSecurity and privacy focused.`,
+      'Shodan': `🔎 SHODAN TUTORIAL\n\nSearch: "Apache" "port 80"\nFilters: country:US, city:London\nAPI: use shodan-cli for terminal\nMonitor: set up alerts\n\nSearch engine for internet-connected devices.`,
+      'Aircrack-ng': `🪝 AIRCRACK-NG TUTORIAL\n\nMonitor: airmon-ng start wlan0\nCapture: airodump-ng wlan0mon\nDeauth: aireplay-ng -0 5 -a AP_MAC wlan0mon\nCrack: aircrack-ng -w wordlist cap.cap\n\nWiFi security auditing.`,
+      'Gobuster': `📁 GOBUSTER TUTORIAL\n\nDir bust: gobuster dir -u http://target -w /usr/share/wordlists/dirb/common.txt\nDNS: gobuster dns -d target.com -w list.txt\nVhost: gobuster vhost -u target.com -w list\n\nDirectory and DNS brute forcing.`,
+      'Networking Basics': `🌐 NETWORKING TUTORIAL\n\nOSI model: Physical, Data Link, Network, Transport, Session, Presentation, Application\nTCP/IP: IP, TCP, UDP, ICMP\nCommands: ping, traceroute, netstat, ss\nTools: Wireshark, Nmap\n\nFoundation of cybersecurity.`,
+      'Linux for Hackers': `🐧 LINUX TUTORIAL\n\nCommands: ls, cd, chmod, chown, grep, sed, awk, find\nPermissions: rwx, 644, 755\nScripting: bash scripts, loops, conditionals\nTools: nmap, metasploit, etc.\n\nMaster the terminal.`,
+      'Recon & OSINT': `🔍 RECON TUTORIAL\n\ntheHarvester -d target.com -b google\nShodan: search for target\nGoogle dorks: site:target.com intitle:"login"\nMaltego: run transforms\n\nPassive information gathering.`,
+      'Network Scanning': `📡 SCANNING TUTORIAL\n\nNmap: -sS (TCP SYN), -sU (UDP), -sV (version)\nScan range: nmap 192.168.1.1-254\nOS detect: -O\nScripts: --script vuln\n\nActive reconnaissance.`,
+      'Web App Security': `🌍 WEB SECURITY TUTORIAL\n\nOWASP Top 10: Injection, XSS, CSRF, IDOR, etc.\nSQLmap: automated SQL injection\nBurp Suite: intercept, modify, brute force\nXSS: <script>alert(1)</script>\n\nProtect web apps.`,
+      'Exploitation 101': `💣 EXPLOITATION TUTORIAL\n\nMetasploit: use exploit, set payload, run\nBuffer overflow: fuzzing, EIP control, shellcode\nPrivilege escalation: sudo, SUID, kernel exploits\n\nEthical exploitation.`,
+      'Cryptography': `🔐 CRYPTOGRAPHY TUTORIAL\n\nHashing: MD5, SHA1, SHA256\nEncryption: AES, RSA, OpenSSL\nCracking: hashcat, John\nCommands: openssl enc -aes-256-cbc -in file -out file.enc\n\nProtect data.`,
+      'Firewall & IDS': `🛡 FIREWALL TUTORIAL\n\niptables: iptables -A INPUT -p tcp --dport 22 -j ACCEPT\nSnort rules: alert tcp any any -> any 80 (msg:"HTTP";)\nSuricata: modern IDS/IPS\n\nNetwork defense.`,
+      'SIEM & Logs': `📊 SIEM TUTORIAL\n\nSplunk: index, source, sourcetype\nELK: Elasticsearch, Logstash, Kibana\nQueries: status=404, src_ip=1.2.3.4\nDashboards: visualize threats\n\nSecurity information and event management.`,
+      'Malware Analysis': `🧬 MALWARE TUTORIAL\n\nStatic: strings, hexdump, PEview\nDynamic: strace, ltrace, sandbox\nTools: Ghidra, IDA, Cuckoo\n\nUnderstand malware behavior.`,
+      'Privilege Escalation': `🏴 PRIVESC TUTORIAL\n\nLinux: sudo -l, find / -perm -4000 2>/dev/null, kernel exploits\nWindows: whoami /priv, powershell commands\nMetasploit: post/multi/recon/local_exploit_suggester\n\nElevate your access.`,
+      'CTF Strategy': `🧩 CTF TUTORIAL\n\nPwn: buffer overflow, return-oriented programming\nCrypto: hash cracking, RSA, XOR\nForensics: binwalk, strings, foremost\nWeb: SQLi, XSS, file uploads\n\nPractice, practice, practice.`,
+    };
+
+    let msg = tutorials[topic] || `📘 TUTORIAL: ${topic}\n\nClick any module, tool, or path to see detailed commands and definitions.\nAll content is for educational purposes only.`;
+    // if topic is a module name, try to find specific
+    const moduleMatch = modules.find(m => m.name === topic);
+    if (moduleMatch) {
+      msg = `📘 ${moduleMatch.name} — ${moduleMatch.desc}\n\n${tutorials[topic] || 'Full tutorial: commands, definitions, and best practices.'}\n\nAlways use ethically.`;
+    }
+    // if topic is tool, try to find tool tutorial
+    const toolMatch = tools.find(t => t.name === topic);
+    if (toolMatch) {
+      msg = `🔧 ${toolMatch.name} — ${tutorials[topic] || 'Commands, options, and real-world usage.'}`;
+    }
+    alert(msg);
+  }
+
+  // ---------- QUIZ ----------
+  let currentQ = 0, answered = false, score = 0, total = 0;
+  let shuffled = [...quizQuestions].sort(() => Math.random() - 0.5);
+
+  function loadQuestion() {
+    answered = false;
+    const q = shuffled[currentQ % shuffled.length];
+    document.getElementById('quiz-question').textContent = q.q;
+    document.getElementById('quiz-feedback').className = 'quiz-feedback';
+    document.getElementById('quiz-feedback').textContent = '';
+    const keys = ['A','B','C','D'];
+    document.getElementById('quiz-options').innerHTML = q.options.map((opt, i) => `
+      <button class="quiz-opt" onclick="answerQ(${i})">
+        <span class="quiz-opt-key">${keys[i]}</span> ${opt}
+      </button>
+    `).join('');
+  }
+
+  function answerQ(idx) {
+    if (answered) return;
+    answered = true; total++;
+    const q = shuffled[currentQ % shuffled.length];
+    const opts = document.querySelectorAll('.quiz-opt');
+    opts[idx].classList.add(idx === q.answer ? 'correct' : 'wrong');
+    opts[q.answer].classList.add('correct');
+    if (idx === q.answer) score++;
+    const fb = document.getElementById('quiz-feedback');
+    fb.className = 'quiz-feedback show ' + (idx === q.answer ? 'correct' : 'wrong');
+    fb.textContent = (idx === q.answer ? '✓ CORRECT — ' : '✗ WRONG — ') + q.explain;
+    document.getElementById('quiz-score').textContent = `Score: ${score} / ${total}`;
+  }
+
+  function nextQuestion() {
+    currentQ++;
+    if (currentQ >= shuffled.length) { shuffled = [...quizQuestions].sort(() => Math.random() - 0.5); currentQ = 0; }
+    loadQuestion();
+  }
+
+  // ---------- TABS ----------
+  function switchTab(filter, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderModules(filter);
+  }
+
+  // ---------- FADE ----------
+  function observeFadeIns() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  }
+
+  // ---------- INIT ----------
+  renderModules('all');
+  renderTools();
+  renderRoadmap();
+  loadQuestion();
+  setTimeout(observeFadeIns, 100);
+</script>
+</body>
+</html>
